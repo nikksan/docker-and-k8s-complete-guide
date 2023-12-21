@@ -1,0 +1,24 @@
+{
+  "name": "docker-and-k8s-complete-guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "rm -rf build && mkdir build && echo \"Hello world!\" >> build/index.html",
+    "test": "jest",
+    "start:dev": "nodemon --quiet src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.2",
+    "redis": "^4.6.11"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  }
+}
