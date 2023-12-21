@@ -3,9 +3,7 @@ WORKDIR /app
 
 COPY package*.json .
 COPY src/ /app/src/
-# COPY test/ /app/src/
+COPY tests/ /app/tests/
 
-RUN apk add --no-cache curl
-
-RUN npm ci --omit=dev
+RUN npm ci
 CMD ["npm", "run", "test"]
