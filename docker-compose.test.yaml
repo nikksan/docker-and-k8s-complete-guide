@@ -12,8 +12,6 @@ services:
   redis:
     image: redis:6.2
     restart: always
-    # ports:
-    #   - '${REDIS_PORT}:${REDIS_PORT}'
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 1s
