@@ -2,21 +2,32 @@ const express = require('express')
 const app = express()
 const process = require('node:process');
 const redis = require('redis');
+const { Client: PGClient } = require('pg');
+const assert = require('node:assert');
+const amqplib = require('amqplib');
 
-const client = redis.createClient({
-    url: `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
-});
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    const dotenv = require('dotenv');
+    dotenv.config({ path: __dirname + '/../.env' });
+}
+
+let redisClient;
 
 app.get('/', async (_req, res) => {
-    const prevHitsValue = await client.get('hits');
+    const prevHitsValue = await redisClient.get('hits');
     const prevHits = prevHitsValue ? parseInt(prevHitsValue) : 0;
     const currentHits = prevHits + 1;
-    await client.set('hits', currentHits);
+    await redisClient.set('hits', currentHits);
 
     res.status(200).send({
         hits: currentHits,
     });
-})
+});
+
+
+app.get('/html', (_req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 
 app.get('/crash-it', async (_req, res) => {
     setTimeout(() => {
@@ -35,9 +46,38 @@ app.get('/health', (_req, res) => {
 const port = process.env.PORT || 3000;
 
 (async () => {
-    client.on('error', err => console.log('Redis Client Error', err));
-    await client.connect();
-    log('redis client connected');
+    redisClient = redis.createClient({
+        url: `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+    });
+    redisClient.on('error', err => console.log('Redis Client Error', err));
+    await redisClient.connect();
+    log('redisClient connected');
+
+    const pgClient = new PGClient({
+        host: process.env.POSTGRES_HOST,
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+        port: process.env.POSTGRES_PORT,
+    });
+    await pgClient.connect();
+    log('pgClient connected');
+
+    while(true) {
+        try {
+            await amqplib.connect({
+                hostname: process.env.RABBITMQ_HOST,
+                username: process.env.RABBITMQ_DEFAULT_USER,
+                password: process.env.RABBITMQ_DEFAULT_PASS,
+                port: process.env.RABBITMQ_PORT,
+            });
+            log('rabbitmq connected');
+            break;
+        } catch (err) {
+            log('rabbitmq failed to connect:', err);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    }
 
     const httpServer = app.listen(port, () => {
         log(`Example app listening on port ${port}`)
@@ -47,62 +87,6 @@ const port = process.env.PORT || 3000;
 })();
 
 module.exports = app;
-
-// process.on('uncaughtException', (err) => {
-//     log('got uncaughtException:', err);
-// });
-
-// process.on('unhandledRejection', (err) => {
-//     log('got unhandledRejection:', err);
-// });
-
-// const signals = [
-//     'SIGABRT',
-//     'SIGALRM',
-//     'SIGBUS',
-//     'SIGCHLD',
-//     'SIGCONT',
-//     'SIGFPE',
-//     'SIGHUP',
-//     'SIGINT',
-//     'SIGIO',
-//     'SIGIOT',
-//     'SIGILL',
-//     'SIGPIPE',
-//     'SIGPOLL',
-//     'SIGPROF',
-//     'SIGPWR',
-//     'SIGQUIT',
-//     'SIGSEGV',
-//     'SIGSTKFLT',
-//     'SIGSYS',
-//     'SIGTERM',
-//     'SIGTRAP',
-//     'SIGTSTP',
-//     'SIGTTIN',
-//     'SIGTTOU',
-//     'SIGUNUSED',
-//     'SIGURG',
-//     'SIGUSR1',
-//     'SIGUSR2',
-//     'SIGVTALRM',
-//     'SIGWINCH',
-//     'SIGXCPU',
-//     'SIGXFSZ',
-//     'SIGBREAK',
-//     'SIGLOST',
-//     'SIGINFO',
-//     // 'SIGKILL',
-//     // 'SIGSTOP',
-// ];
-
-// process.stdin.resume();
-// signals.forEach(signal => {
-//     process.on(signal, () => {
-//         log(`got ${signal} signal, exiting..`);
-//         process.exit(0);
-//     });
-// })
 
 function log(...args) {
     console.log(`[${new Date().toISOString()}] [index]`, ...args);
