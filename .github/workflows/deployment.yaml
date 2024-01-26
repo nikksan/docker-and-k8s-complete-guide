@@ -21,7 +21,7 @@ env:
   GAR_LOCATION: europe-central2
   GKE_CLUSTER: cluster-1
   GKE_ZONE: europe-central2-a
-  DEPLOYMENT_NAME: gke-test-project
+  DEPLOYMENT_NAME: test-project
   REPOSITORY: test-project
   IMAGE: static-site
 
