@@ -1,8 +1,0 @@
-services:
-  - docker
-
-before_install:
-- cp .env .env.test
-
-script:
-- docker compose -f docker-compose.test.yaml up --build
