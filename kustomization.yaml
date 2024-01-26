@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - k8s/app-deployment.yaml
+    - k8s/app-ingress.yaml
+    - k8s/app-service.yaml
+    - k8s/postgres-deployment.yaml
+    - k8s/postgres-pvc.yaml
+    - k8s/postgres-service.yaml
+    - k8s/rabbitmq-deployment.yaml
+    - k8s/rabbitmq-service.yaml
+    - k8s/redis-deployment.yaml
+    - k8s/redis-service.yaml
+namespace: test-project
+commonLabels:
+    app: test-project
