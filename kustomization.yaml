@@ -11,6 +11,5 @@ resources:
     - k8s/rabbitmq-service.yaml
     - k8s/redis-deployment.yaml
     - k8s/redis-service.yaml
-namespace: test-project
 commonLabels:
     app: test-project
