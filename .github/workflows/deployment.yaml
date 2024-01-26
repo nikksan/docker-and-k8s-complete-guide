@@ -19,7 +19,7 @@ on:
 env:
   PROJECT_ID: docker-and-k8s-complete-guide
   GAR_LOCATION: europe-central2
-  GKE_CLUSTER: cluster-1
+  GKE_CLUSTER: cluster-2
   GKE_ZONE: europe-central2-a
   DEPLOYMENT_NAME: test-project
   REPOSITORY: test-project
