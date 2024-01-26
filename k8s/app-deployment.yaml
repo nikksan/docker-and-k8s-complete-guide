@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-project
+  labels:
+    app: test-project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-project
+  template:
+    metadata:
+      labels:
+        app: test-project
+    spec:
+      containers:
+      - name: test-project
+        image: ni94kata/app:0.0.9
+        imagePullPolicy: Always
+        securityContext:
+          privileged: false
+        ports:
+          - name: http
+            containerPort: 80
+        env:
+          - name: PORT
+            value: '3000'
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis
+                key: REDIS_PASSWORD
+          - name: REDIS_HOST
+            value: redis
+          - name: REDIS_PORT
+            value: '6379'
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_HOST
+            value: postgres
+          - name: POSTGRES_USER
+            value: 'root'
+          - name: POSTGRES_DB
+            value: 'random_db'
+          - name: POSTGRES_PORT
+            value: '5432'
+          - name: RABBITMQ_DEFAULT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq
+                key: RABBITMQ_DEFAULT_PASS
+          - name: RABBITMQ_HOST
+            value: rabbitmq
+          - name: RABBITMQ_DEFAULT_USER
+            value: 'root'
+          - name: RABBITMQ_PORT
+            value: '5672'
+

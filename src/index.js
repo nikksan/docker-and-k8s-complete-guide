@@ -6,21 +6,27 @@ const { Client: PGClient } = require('pg');
 const assert = require('node:assert');
 const amqplib = require('amqplib');
 
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    const dotenv = require('dotenv');
-    dotenv.config({ path: __dirname + '/../.env' });
-}
+// if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+//     const dotenv = require('dotenv');
+//     dotenv.config({ path: __dirname + '/../.env' });
+// }
 
 let redisClient;
 
-app.get('/', async (_req, res) => {
-    const prevHitsValue = await redisClient.get('hits');
-    const prevHits = prevHitsValue ? parseInt(prevHitsValue) : 0;
-    const currentHits = prevHits + 1;
-    await redisClient.set('hits', currentHits);
+app.get('/', async (req, res) => {
+    // const prevHitsValue = await redisClient.get('hits');
+    // const prevHits = prevHitsValue ? parseInt(prevHitsValue) : 0;
+    // const currentHits = prevHits + 1;
+    // await redisClient.set('hits', currentHits);
 
+    // res.status(200).send({
+    //     hits: currentHits,
+    // });
     res.status(200).send({
-        hits: currentHits,
+        url: req.url,
+        originalUrl: req.originalUrl,
+        path: req.path,
+        headers: req.headers,
     });
 });
 
@@ -52,6 +58,8 @@ const port = process.env.PORT || 3000;
     redisClient.on('error', err => console.log('Redis Client Error', err));
     await redisClient.connect();
     log('redisClient connected');
+
+    console.log(process.env);
 
     const pgClient = new PGClient({
         host: process.env.POSTGRES_HOST,
