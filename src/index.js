@@ -52,40 +52,40 @@ app.get('/health', (_req, res) => {
 const port = process.env.PORT || 3000;
 
 (async () => {
-    redisClient = redis.createClient({
-        url: `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
-    });
-    redisClient.on('error', err => console.log('Redis Client Error', err));
-    await redisClient.connect();
-    log('redisClient connected');
+    // redisClient = redis.createClient({
+    //     url: `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+    // });
+    // redisClient.on('error', err => console.log('Redis Client Error', err));
+    // await redisClient.connect();
+    // log('redisClient connected');
 
-    console.log(process.env);
+    // console.log(process.env);
 
-    const pgClient = new PGClient({
-        host: process.env.POSTGRES_HOST,
-        user: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
-        port: process.env.POSTGRES_PORT,
-    });
-    await pgClient.connect();
-    log('pgClient connected');
+    // const pgClient = new PGClient({
+    //     host: process.env.POSTGRES_HOST,
+    //     user: process.env.POSTGRES_USER,
+    //     password: process.env.POSTGRES_PASSWORD,
+    //     database: process.env.POSTGRES_DB,
+    //     port: process.env.POSTGRES_PORT,
+    // });
+    // await pgClient.connect();
+    // log('pgClient connected');
 
-    while(true) {
-        try {
-            await amqplib.connect({
-                hostname: process.env.RABBITMQ_HOST,
-                username: process.env.RABBITMQ_DEFAULT_USER,
-                password: process.env.RABBITMQ_DEFAULT_PASS,
-                port: process.env.RABBITMQ_PORT,
-            });
-            log('rabbitmq connected');
-            break;
-        } catch (err) {
-            log('rabbitmq failed to connect:', err);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-    }
+    // while(true) {
+    //     try {
+    //         await amqplib.connect({
+    //             hostname: process.env.RABBITMQ_HOST,
+    //             username: process.env.RABBITMQ_DEFAULT_USER,
+    //             password: process.env.RABBITMQ_DEFAULT_PASS,
+    //             port: process.env.RABBITMQ_PORT,
+    //         });
+    //         log('rabbitmq connected');
+    //         break;
+    //     } catch (err) {
+    //         log('rabbitmq failed to connect:', err);
+    //         await new Promise((resolve) => setTimeout(resolve, 1000));
+    //     }
+    // }
 
     const httpServer = app.listen(port, () => {
         log(`Example app listening on port ${port}`)
