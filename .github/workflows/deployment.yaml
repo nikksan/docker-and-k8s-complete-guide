@@ -23,7 +23,7 @@ env:
   GKE_ZONE: europe-central2-a
   DEPLOYMENT_NAME: test-project
   REPOSITORY: test-project
-  IMAGE: static-site
+  IMAGE: test-project # should be the same as in app-deployment.yaml
 
 jobs:
   setup-build-publish-deploy:
@@ -78,7 +78,7 @@ jobs:
     - name: Deploy
       run: |-
         # replacing the image name in the k8s template
-        ./kustomize edit set image ni94kata/app=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA
+        ./kustomize edit set image $IMAGE=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA
         ./kustomize build . | kubectl apply -f -
         kubectl rollout status deployment/$DEPLOYMENT_NAME
         kubectl get services -o wide

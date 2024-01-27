@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: test-project
-        image: ni94kata/app
+        image: test-project # this is dynamically replaced by kustomize
         imagePullPolicy: Always
         securityContext:
           privileged: false
