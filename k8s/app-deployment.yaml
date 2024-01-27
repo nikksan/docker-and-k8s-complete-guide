@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: test-project
-        image: ni94kata/app:0.0.9
+        image: ni94kata/app
         imagePullPolicy: Always
         securityContext:
           privileged: false
