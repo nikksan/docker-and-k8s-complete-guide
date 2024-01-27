@@ -1,7 +1,6 @@
 version: '3.7'
 services:
   app:
-    image: ni94kata/app:0.0.9
     build:
       context: .
     env_file:
