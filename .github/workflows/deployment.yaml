@@ -16,8 +16,8 @@ jobs:
   tests:
     uses: ./.github/workflows/tests.yaml
   build:
-    uses: ./.github/workflows/build.yaml
     secrets: inherit
+    uses: ./.github/workflows/build.yaml
   deployment:
     needs: [build, linter, tests]
     name: Deployment

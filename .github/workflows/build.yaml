@@ -10,6 +10,7 @@ env:
 
 jobs:
   build:
+    environment: production
     name: Build and publish
     runs-on: ubuntu-latest
     outputs:
@@ -17,9 +18,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-
-    - name: Debug
-      run: echo ${{ secrets.GCP_CREDENTIALS }}
 
     # Auth
     - id: 'auth'
