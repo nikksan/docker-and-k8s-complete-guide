@@ -16,7 +16,7 @@ env:
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest # it just halts when I try 18.04
     environment: production
 
     permissions:
