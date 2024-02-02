@@ -18,7 +18,7 @@ jobs:
   build:
     uses: ./.github/workflows/build.yaml
     with:
-      credentials_json: 'test'
+      credentials_json: ${{ secrets.GCP_CREDENTIALS }}
   deployment:
     needs: [build, linter, tests]
     name: Deployment
