@@ -14,10 +14,12 @@ env:
   IMAGE: test-project # should be the same as in app-deployment.yaml
 
 jobs:
+  linter:
+    uses: ./.github/workflows/linter.yaml
   tests:
     uses: ./.github/workflows/tests.yaml
   deployment:
-    needs: [tests]
+    needs: [linter, tests]
     name: Deployment
     runs-on: ubuntu-latest # it just halts when I try 18.04
     environment: production

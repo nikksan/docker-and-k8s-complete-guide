@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "build": "rm -rf build && mkdir build && echo \"Hello world!\" >> build/index.html",
     "test": "jest",
-    "start:dev": "nodemon --quiet src/index.js"
+    "start:dev": "nodemon --quiet src/index.js",
+    "lint": "eslint './src/**/*.js'"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,9 @@
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
     "jest": "^29.7.0",
     "supertest": "^6.3.3"
   }
