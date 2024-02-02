@@ -6,7 +6,10 @@ on:
       env:
         required: true
         type: string
-
+    outputs:
+      image:
+        description: "The unique name of the published docker image"
+        value: ${{ jobs.build.outputs.image }}
 env:
   PROJECT_ID: docker-and-k8s-complete-guide
   GAR_LOCATION: europe-central2
