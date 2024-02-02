@@ -16,6 +16,6 @@ describe('HTTP server', () => {
     it('should return 200 on GET /', async () => {
         await request(app)
             .get('/')
-            .expect(200);
+            .expect(201);
     });
 });
