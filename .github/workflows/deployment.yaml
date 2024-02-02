@@ -51,8 +51,9 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
+        echo "got image from build: ${{ needs.build.outputs.image }}"
         # replacing the image name in the k8s template
-        ./kustomize edit set image $IMAGE=${{needs.build.outputs.image}}
+        ./kustomize edit set image $IMAGE=${{ needs.build.outputs.image }}
         ./kustomize build . | kubectl apply -f -
         kubectl rollout status deployment/$DEPLOYMENT_NAME
         kubectl get services -o wide
