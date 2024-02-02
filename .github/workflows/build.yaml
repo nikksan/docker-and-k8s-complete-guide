@@ -1,0 +1,45 @@
+name: Build & Publish
+
+on: [workflow_call]
+
+env:
+  PROJECT_ID: docker-and-k8s-complete-guide
+  GAR_LOCATION: europe-central2
+  REPOSITORY: test-project
+  IMAGE: test-project
+
+jobs:
+  build:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.publish.outputs.image }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Auth
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}' # check https://medium.com/@gravish316/setup-ci-cd-using-github-actions-to-deploy-to-google-kubernetes-engine-ef465a482fd for more info
+
+    # - name: Docker configuration
+    - name: Docker configuration
+      run: |-
+        gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+    # Push the Docker image to Google Artifact Registry
+    - name: Publish
+      id: publish
+      run: |-
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
+        echo "image=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
