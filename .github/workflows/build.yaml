@@ -1,6 +1,11 @@
 name: Build & Publish
 
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      credentials_json:
+        required: true
+        type: string
 
 env:
   PROJECT_ID: docker-and-k8s-complete-guide
@@ -18,15 +23,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Debug
-      run: |-
-        echo 'secret is ${{ secrets.GCP_CREDENTIALS }}'
-
     # Auth
     - id: 'auth'
       uses: 'google-github-actions/auth@v0'
       with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        credentials_json: ${{ inputs.credentials_json }}
 
     # - name: Docker configuration
     - name: Docker configuration
