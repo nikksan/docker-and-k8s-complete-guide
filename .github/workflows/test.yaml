@@ -12,3 +12,5 @@ jobs:
     - uses: isbang/compose-action@v1.5.1
       with:
         compose-file: "./docker-compose.test.yaml"
+      env:
+        REDIS_PASSWORD: "${{ vars.REDIS_PASSWORD }}"
