@@ -8,11 +8,15 @@ jobs:
     environment: testing
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Create .env.test
-      run: touch .env.test
-    - uses: isbang/compose-action@v1.5.1
-      with:
-        compose-file: "./docker-compose.test.yaml"
-      env:
-        REDIS_PASSWORD: "${{ vars.REDIS_PASSWORD }}"
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Prepare environment
+      run: |
+        touch .env.test
+        echo "REDIS_PASSWORD=${{ vars.REDIS_PASSWORD }}" >> $GITHUB_ENV
+        echo "REDIS_HOST=${{ vars.REDIS_HOST }}" >> $GITHUB_ENV
+        echo "REDIS_PORT=${{ vars.REDIS_PORT }}" >> $GITHUB_ENV
+        echo "REDIS_USERNAME=${{ vars.REDIS_USERNAME }}" >> $GITHUB_ENV
+    - name: Run tests
+      run: docker compose -f docker-compose.test.yaml up --build -d
+
