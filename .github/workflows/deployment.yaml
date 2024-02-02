@@ -18,7 +18,7 @@ jobs:
     uses: ./.github/workflows/tests.yaml
   deployment:
     needs: [tests]
-    name: Setup, Build, Publish, and Deploy
+    name: Deployment
     runs-on: ubuntu-latest # it just halts when I try 18.04
     environment: production
 
