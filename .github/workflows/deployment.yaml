@@ -19,7 +19,6 @@ jobs:
     uses: ./.github/workflows/build.yaml
     secrets:
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      TEST: asd
   deployment:
     needs: [build, linter, tests]
     name: Deployment
