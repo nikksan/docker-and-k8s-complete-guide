@@ -15,7 +15,7 @@ env:
 
 jobs:
   tests:
-    uses: ./.github/workflows/tests.yml
+    uses: ./.github/workflows/tests.yaml
   deployment:
     needs: [tests]
     name: Setup, Build, Publish, and Deploy
