@@ -18,5 +18,5 @@ jobs:
         echo "REDIS_PORT=${{ vars.REDIS_PORT }}" >> $GITHUB_ENV
         echo "REDIS_USERNAME=${{ vars.REDIS_USERNAME }}" >> $GITHUB_ENV
     - name: Run tests
-      run: docker compose -f docker-compose.test.yaml up --build
+      run: docker compose -f docker-compose.test.yaml up --build --abort-on-container-exit
 
