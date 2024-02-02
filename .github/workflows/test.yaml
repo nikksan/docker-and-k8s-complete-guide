@@ -10,7 +10,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    # - name: Create empty .env.test file
-    #   run: touch .env.test
+    - name: Create empty .env.test file
+      run: touch .env.test
+    - name: Set REDIS_PASSWORD
+      run: echo "REDIS_PASSWORD=${{ vars.REDIS_PASSWORD }}" >> $GITHUB_ENV
     - name: Run tests
       run: docker compose -f docker-compose.test.yaml up --build
