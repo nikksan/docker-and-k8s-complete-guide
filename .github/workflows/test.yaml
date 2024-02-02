@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Create .env.test
+      run: touch .env.test
     - uses: isbang/compose-action@v1.5.1
       with:
         compose-file: "./docker-compose.test.yaml"
