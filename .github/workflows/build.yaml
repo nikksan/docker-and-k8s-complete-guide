@@ -1,6 +1,11 @@
 name: Build & Publish
 
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
 
 env:
   PROJECT_ID: docker-and-k8s-complete-guide
@@ -10,7 +15,7 @@ env:
 
 jobs:
   build:
-    environment: production
+    environment: ${{ inputs.env }}
     name: Build and publish
     runs-on: ubuntu-latest
     outputs:
@@ -43,4 +48,5 @@ jobs:
       id: publish
       run: |-
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
+        echo "image=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA""
         echo "image=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
