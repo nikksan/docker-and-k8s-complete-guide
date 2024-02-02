@@ -17,8 +17,7 @@ jobs:
     uses: ./.github/workflows/tests.yaml
   build:
     uses: ./.github/workflows/build.yaml
-    secrets:
-      GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+    secrets: inherit
   deployment:
     needs: [build, linter, tests]
     name: Deployment
