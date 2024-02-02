@@ -10,5 +10,7 @@ jobs:
       uses: actions/checkout@v3
     - name: Setup environment
       run: cp .env.example .env.test
+    - name: Debug
+      run: docker compose -f docker-compose.test.yaml config
     - name: Run tests
       run: docker compose -f docker-compose.test.yaml up --build
