@@ -16,5 +16,7 @@ jobs:
         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
         sudo apt-get update
         sudo apt-get install docker-ce
+    - name: Create empty .env.test
+      run: touch .env.test
     - name: Run tests
       run: docker compose -f docker-compose.test.yaml up --build
