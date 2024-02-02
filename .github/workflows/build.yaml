@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    environment: ${{ inputs.env }}
+    environment: ${{ inputs.env }} # gotta have it in order to access the secrets https://github.com/actions/runner/issues/1490#issuecomment-1717389283
     name: Build and publish
     runs-on: ubuntu-latest
     outputs:
@@ -47,6 +47,6 @@ jobs:
     - name: Publish
       id: publish
       run: |-
+        echo "image is $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
-        echo "image=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA""
         echo "image=$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" >> "$GITHUB_OUTPUT"
