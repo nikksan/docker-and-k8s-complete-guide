@@ -8,9 +8,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Setup environment
+    - name: Create empty .env.test file
       run: cp .env.example .env.test
-    - name: Debug
-      run: docker compose -f docker-compose.test.yaml config
     - name: Run tests
       run: docker compose -f docker-compose.test.yaml up --build
