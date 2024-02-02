@@ -4,11 +4,13 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    environment: testing
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Create empty .env.test file
-      run: cp .env.example .env.test
+      run: touch .env.test
     - name: Run tests
       run: docker compose -f docker-compose.test.yaml up --build
