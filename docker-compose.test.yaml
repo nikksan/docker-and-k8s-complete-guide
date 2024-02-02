@@ -12,8 +12,6 @@ services:
   redis:
     image: redis:6.2
     restart: always
-    env_file:
-      - .env.test
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 1s
