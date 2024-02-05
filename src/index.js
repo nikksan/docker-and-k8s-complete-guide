@@ -53,6 +53,11 @@ app.get('/health', (_req, res) => {
   res.status(200).send();
 });
 
+app.get('/ready', (_req, res) => {
+    // log('healthcheck hit');
+    res.status(200).send();
+  });
+
 const port = process.env.PORT || 3000;
 
 (async () => {
