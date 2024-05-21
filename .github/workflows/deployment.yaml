@@ -3,17 +3,15 @@ name: Deployment
 on:
   workflow_dispatch:
     inputs:
-      name:
-        type: choice
-        description: Who to greet
-        options:
-        - monalisa
-        - cschleiden
+      gke_cluster:
+        description: 'GKE Cluster'
+        type: string
+        default: 'cluster-2'
   push:
     branches: [ "master" ]
 
 env:
-  GKE_CLUSTER: cluster-2
+  GKE_CLUSTER: ${{ inputs.gke_cluster }}
   GKE_ZONE: europe-central2-a
   DEPLOYMENT_NAME: test-project
   IMAGE: test-project # should be the same as in app-deployment.yaml
