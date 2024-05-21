@@ -6,13 +6,15 @@ on:
       gke_cluster:
         description: 'GKE Cluster'
         type: string
-        default: 'cluster-2'
+      gke_zone:
+        description: 'GKE Zone'
+        type: string
   push:
     branches: [ "master" ]
 
 env:
-  GKE_CLUSTER: ${{ inputs.gke_cluster }}
-  GKE_ZONE: europe-central2-a
+  GKE_CLUSTER: ${{ inputs.gke_cluster || 'cluster-2' }}
+  GKE_ZONE: ${{ inputs.gke_zone || 'europe-central2-a' }}
   DEPLOYMENT_NAME: test-project
   IMAGE: test-project # should be the same as in app-deployment.yaml
 
