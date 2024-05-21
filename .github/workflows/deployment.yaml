@@ -2,17 +2,17 @@ name: Deployment
 
 on:
   workflow_dispatch:
-    inputs:
-      namespace:
-        description: 'Namespace where to deploy the image'
-        type: string
+    # inputs:
+    #   namespace:
+    #     description: 'Namespace where to deploy the image'
+    #     type: string
   push:
     branches: [ "master" ]
 
 env:
   GKE_CLUSTER: cluster-2
   GKE_ZONE: europe-central2-a
-  NAMESPACE: ${{ inputs.namespace || 'production' }}
+#   NAMESPACE: ${{ inputs.namespace || 'production' }}
   IMAGE: test-project # should be the same as in app-deployment.yaml
 
 jobs:
