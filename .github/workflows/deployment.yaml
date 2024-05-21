@@ -3,74 +3,64 @@ name: Deployment
 on:
   workflow_dispatch:
     inputs:
-      gke_cluster:
-        description: 'GKE Cluster'
-        type: string
-      gke_zone:
-        description: 'GKE Zone'
+      namespace:
+        description: 'Namespace where to deploy the image'
         type: string
   push:
     branches: [ "master" ]
 
 env:
-  GKE_CLUSTER: ${{ inputs.gke_cluster || 'cluster-2' }}
-  GKE_ZONE: ${{ inputs.gke_zone || 'europe-central2-a' }}
-  DEPLOYMENT_NAME: test-project
+  GKE_CLUSTER: cluster-2
+  GKE_ZONE: europe-central2-a
+  NAMESPACE: ${{ inputs.namespace || 'production' }}
   IMAGE: test-project # should be the same as in app-deployment.yaml
 
 jobs:
-    debug:
-        name: Debug
-        runs-on: ubuntu-latest
-        steps:
-            - name: Test
-              run: echo GKE_CLUSTER = ${{ env.GKE_CLUSTER }}
+  linter:
+    uses: ./.github/workflows/linter.yaml
+  tests:
+    uses: ./.github/workflows/tests.yaml
+  build:
+    secrets: inherit
+    with:
+      env: production
+    uses: ./.github/workflows/build.yaml
+  deployment:
+    needs: [build, linter, tests]
+    name: Deployment
+    runs-on: ubuntu-latest # it just halts when I try 18.04
+    environment: production
 
-#   linter:
-#     uses: ./.github/workflows/linter.yaml
-#   tests:
-#     uses: ./.github/workflows/tests.yaml
-#   build:
-#     secrets: inherit
-#     with:
-#       env: production
-#     uses: ./.github/workflows/build.yaml
-#   deployment:
-#     needs: [build, linter, tests]
-#     name: Deployment
-#     runs-on: ubuntu-latest # it just halts when I try 18.04
-#     environment: production
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
-#     permissions:
-#       contents: 'read'
-#       id-token: 'write'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
 
-#     steps:
-#     - name: Checkout
-#       uses: actions/checkout@v4
+    # Auth
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}' # check https://medium.com/@gravish316/setup-ci-cd-using-github-actions-to-deploy-to-google-kubernetes-engine-ef465a482fd for more info
 
-#     # Auth
-#     - id: 'auth'
-#       uses: 'google-github-actions/auth@v2'
-#       with:
-#         credentials_json: '${{ secrets.GCP_CREDENTIALS }}' # check https://medium.com/@gravish316/setup-ci-cd-using-github-actions-to-deploy-to-google-kubernetes-engine-ef465a482fd for more info
+    - name: Set up GKE credentials
+      uses: google-github-actions/get-gke-credentials@v2
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
 
-#     - name: Set up GKE credentials
-#       uses: google-github-actions/get-gke-credentials@v2
-#       with:
-#         cluster_name: ${{ env.GKE_CLUSTER }}
-#         location: ${{ env.GKE_ZONE }}
-
-#     # Set up kustomize
-#     - name: Set up Kustomize
-#       run: |-
-#         curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-#         chmod u+x ./kustomize
-#     # Deploy the Docker image to the GKE cluster
-#     - name: Deploy
-#       run: |-
-#         # replacing the image name in the k8s template
-#         ./kustomize edit set image $IMAGE=${{ needs.build.outputs.image }}
-#         ./kustomize build . | kubectl apply -f -
-#         kubectl rollout status deployment/$DEPLOYMENT_NAME
-#         kubectl get services -o wide
+    # Set up kustomize
+    - name: Set up Kustomize
+      run: |-
+        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+    # Deploy the Docker image to the GKE cluster
+    - name: Deploy
+      run: |-
+        # replacing the image name in the k8s template
+        ./kustomize edit set image $IMAGE=${{ needs.build.outputs.image }}
+        ./kustomize build . | kubectl apply -f -
+        kubectl rollout status deployment/$DEPLOYMENT_NAME
+        kubectl get services -o wide
